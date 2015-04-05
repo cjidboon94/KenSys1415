@@ -3,7 +3,7 @@ concept(living_creature).
 concept(animal).
 
 concept(warmblooded).
-concept(coldblooded)
+concept(coldblooded).
 
 concept(mammal).
 concept(bird).
@@ -24,7 +24,7 @@ concept(toad).
 concept(crocodile).
 concept(turtle).
 
-concept(eel)
+concept(eel).
 concept(seahorse).
 
 concept(john).
@@ -37,17 +37,17 @@ has(warmblooded, temperature, constant).
 has(coldblooded, temperature, variable).
 
 has(mammal,skintype, hair).
-has(mammal, limbs, 2/4).
+has(mammal, limbs, between(2, 4)).
 has(mammal, reproduction, birth).
 has(mammal, breathing, lungs).
 
 has(bird, wings, true).
 has(bird, skintype, feathers).
-has(bird, limbs, 2/4).
+has(bird, limbs, between(2,4)).
 has(bird, breathing, lungs).
 has(bird, reproduction, eggs).
 
-has(amphibian, skintype, smooth/warty).
+has(amphibian, skintype, smooth).
 has(amphibian, reproduction, egg).
 
 has(fish, reproduction, eggs).
@@ -71,16 +71,13 @@ has(crocodile, diet, carnivore).
 has(turtle, diet, herbivore).
 
 has(eel, fins, 1).
-has(seahorse, fins, 2/4).
+has(seahorse, fins, between(2,4)).
 
 has(john, sex, male).
 has(mary, sex, female).
 
-is_a(X, thing).
 is_a(living_creature, thing).
-is_a(X, living_creature).
 is_a(animal, living_creature).
-is_a(X, animal).
 is_a(warmblooded, animal).
 is_a(coldblooded, animal).
 
