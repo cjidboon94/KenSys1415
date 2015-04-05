@@ -50,59 +50,67 @@ is_a(blahtje, mammal).
 % inheritance rules
 %%%%%%%%%%%%%%%%%%%
 is_a_rec(Child,Parent):- is_a(Child, Parent).
-is_a_rec(Child,Parent):- 
-    concept(Parent), 
-    concept(Child), is_a(Child, Z), 
+is_a_rec(Child,Parent):-
+    concept(Parent),
+    concept(Child), is_a(Child, Z),
     is_a_rec(Z, Parent), concept(Z).
 
 % wrapper rule for is_a
-is_a_wrapper(Child, Parent):- is_a_rec(Child, Parent).
-is_a_wrapper(Child, Parent):- 
-	concept(Child), concept(Parent), 
-	Parent \= Child, 
-	\+setof(_, has(Parent, _, _), _).
+is_a_wrapper(Child, Parent):-
+    \+is_a_rec(Parent, Child),
+    is_a_rec(Child, Parent).
 
-is_a_wrapper(Child, Parent):- 
-	concept(Child), concept(Parent), 
-	Parent \= Child, 
-	setof([Type,Value], has(Parent, Type, Value), ParentAtributes), 
-	is_a2(Child, ParentAtributes).
+is_a_wrapper(Child, Parent):-
+    \+is_a_rec(Parent, Child),
+    concept(Child), concept(Parent),
+    Parent \= Child,
+    \+setof(_, has(Parent, _, _), _).
+
+is_a_wrapper(Child, Parent):-
+    \+is_a_rec(Parent, Child),
+    concept(Child), concept(Parent),
+    Parent \= Child,
+    setof([Type,Value], has(Parent, Type, Value), ParentAtributes),
+    is_a2(Child, ParentAtributes).
 
 % base case, all atributes have been checked
 is_a2(_, []):- !.
 
 % checks for all the properties in the parent whether the child has the same value for the properties
-is_a2(Child, [[Type,Value]|Tail]):- 
+is_a2(Child, [[Type,Value]|Tail]):-
     has(Child, Type, Value), !,
     is_a2(Child, Tail).
 
 % specific rule inheritance rule for ranges
-is_a2(Child, [[Type,between(LowerValue, UpperValue)]|Tail]):- 
-    has(Child, Type, Value), 
-    between(LowerValue, UpperValue, Value), !, 
+is_a2(Child, [[Type,between(LowerValue, UpperValue)]|Tail]):-
+    has(Child, Type, Value),
+    between(LowerValue, UpperValue, Value), !,
     is_a2(Child, Tail).
 
 is_all(Concept, Content):- setof(Parent, is_a_wrapper(Concept, Parent), Content), !.
 is_all(_, []).
+
 
 is_child(Concept, Parent):- 
 	concept(Concept), 
 	is_all(Concept, Content), 
 	member(Parent, Content), 
 	print(Content), !, 
-	has_most(Content, Parent, 1), !, 
-	concept(Parent).
+	has_most_wrapper(Content, Parent), !, 
+	concept(Parent), print(Parent).
 
-%this always returns true for some reason.
-has_most([], _, _):- !.
-has_most([Ancestor|OtherContent], Ancestor, CurrentLen):-
+has_most_wrapper(Content, Parent):-
+   has_most(Content, _, 0, Parent).
+
+has_most([], Result, _, Result):- !.
+has_most([Ancestor|OtherContent], _, CurrentLen, Result):-
    has_all(Ancestor, Content2),
    length(Content2, Len),
    CurrentLen < Len, !,
-   has_most(OtherContent, Ancestor, Len).
-   
-has_most([_|OtherContent], Parent, CurrentLen):-
-   !, has_most(OtherContent, Parent, CurrentLen).
+   has_most(OtherContent, Ancestor, Len, Result).
+
+has_most([_|OtherContent], Parent, CurrentLen, Result):-
+   !, has_most(OtherContent, Parent, CurrentLen, Result).
 
 
 
