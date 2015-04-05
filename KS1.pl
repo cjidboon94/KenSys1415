@@ -170,12 +170,15 @@ add_attribute(Concept, Type, Value):-
 go1:-
     add_concept(plant),
     show(plant).
+
 %Adds a fully subsumed concept
 go2:- 
 	add_concept(ape),
-	has_all(mammal, Attributes),
-	
-go3.
+	add_relation(ape, mammal),
+	add_attribute(ape, limbs, 4).
+go3:-
+	add_concept(rabbit),
+	add_attribute(rabbit, )
 go4.
 go5.
 
