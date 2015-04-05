@@ -75,7 +75,8 @@ is_a_wrapper(Child, Parent):-
 % base case, all atributes have been checked
 is_a2(_, []):- !.
 
-% checks for all the properties in the parent whether the child has the same value for the properties
+% checks for all the properties in the parent whether the child has the
+% same value for the properties
 is_a2(Child, [[Type,Value]|Tail]):-
     has(Child, Type, Value), !,
     is_a2(Child, Tail).
@@ -140,15 +141,29 @@ show_ancestors([Ancestor|OtherContent]):-
 
 % adds a new rule
 add_concept(Concept):-
-     \+concept(Concept),
-     assert(concept(Concept)).
+    \+concept(Concept),
+    assert(concept(Concept)).
+
+add_relation(Child, Parent):-
+    \+is_a_rec(Child, Parent),
+    assert(is_a(Child, Parent)).
 
 % adds a new attribute
 add_attribute(Concept, Type, Value):-
-     \+has(Concept, Type, _),
-     assert(has(Concept, Type, Value)).
+    \+has(Concept, Type, _),
+    assert(has(Concept, Type, Value)).
 
 add_attribute(Concept, Type, Value):-
-     has(Concept, Type, between(Min, Max)), between(Min, Max, Value),
-     (retract(has(Concept, Type, between(Min, Max))); \+retract(has(Concept, Type, between(Min, Max)))),
-     assert(has(Concept, Type, Value)).
+    has(Concept, Type, between(Min, Max)), between(Min, Max, Value),
+    (retract(has(Concept, Type, between(Min, Max))); \+retract(has(Concept, Type, between(Min, Max)))),
+    assert(has(Concept, Type, Value)).
+
+
+%%%%%%%%%%%%%%%%%%%%%
+% shortcuts
+%%%%%%%%%%%%%%%%%%%%%
+
+% Adds a fully new concept
+go1:-
+    add_concept(plant),
+    show(plant).
