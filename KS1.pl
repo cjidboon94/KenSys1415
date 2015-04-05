@@ -63,7 +63,7 @@ is_all(_, []).
 is_child(Concept, Parent):-
     concept(Concept), concept(Parent),
     is_all(Concept, Content),
-    member(Parent, Content), !,
+    member(Parent, Content),
     has_most_wrapper(Content, Parent), !.
 
 has_most_wrapper(Content, Parent):-
@@ -171,10 +171,10 @@ go1:-
     add_concept(plant),
     show(plant).
 %Adds a fully subsumed concept
-go2:- 
+go2:-
 	add_concept(ape),
 	has_all(mammal, Attributes),
-	
+
 go3.
 go4.
 go5.
