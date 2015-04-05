@@ -14,6 +14,8 @@ concept(blahtje).
 concept(something).
 
 % attributes of a mammal
+:- dynamic has/3.
+
 has(mammal, reproduction, birth).
 has(mammal, skintype, hair).
 has(mammal, limbcount, between(2,4)).
@@ -32,9 +34,10 @@ has(thingy, wings, true).
 
 has(Child, Value, Type):- concept(Child), is_a_rec(Child, Parent), concept(Parent), has(Parent, Value, Type).
 
-has_all(Concept, Content):- bagof([Value,Type], has(Concept, Value, Type), Content).
+has_all(Concept, Content):- setof([Value,Type], has(Concept, Value, Type), Content).
+has_all(Concept, []):- \+setof(_, has(Concept, _, _), _).
 
-is_a(blahtje, something).
+is_a(blahtje, mammal).
 
 
 %%%%%%%%%%%%%%%%%%%
@@ -65,7 +68,8 @@ is_a2(Child, [[Type,between(LowerValue, UpperValue)]|Tail]):-
     between(LowerValue, UpperValue, Value), !, 
     is_a2(Child, Tail).
 
-is_all(Concept, Content):- bagof(Parent, is_a_wrapper(Concept, Parent), Content).
+is_all(Concept, Content):- setof(Parent, is_a_wrapper(Concept, Parent), Content).
+is_all(Concept, []):- \+setof(_, is_a_wrapper(Concept, _), _).
 
 %%%%%%%%%%%%%%%%%%%%%
 % database operations
@@ -76,3 +80,7 @@ show(Concept):- has_all(Concept, Content), is_all(Concept, Content2), print(Cont
 
 % adds a new rule
 add_concept(Concept):- \+concept(Concept), assert(concept(Concept)).
+
+% adds a new attribute
+add_attribute(Concept, Type, Value):- \+has(Concept, Type, _), assert(has(Concept, Type, Value)).
+add_attribute(Concept, Type, Value):- has(Concept, Type, between(Min, Max)), between(Min, Max, Value), (retract(has(Concept, Type, between(Min, Max))); \+retract(has(Concept, Type, between(Min, Max)))), assert(has(Concept, Type, Value)).
