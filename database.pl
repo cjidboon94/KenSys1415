@@ -1,3 +1,9 @@
+:- dynamic concept/1.
+% attributes of a mammal
+%inheritance relations.
+:- dynamic is_a/1.
+
+
 concept(thing).
 concept(living_creature).
 concept(animal).
@@ -30,7 +36,14 @@ concept(seahorse).
 concept(john).
 concept(mary).
 
-has(living_creature, biological processes).
+:- dynamic has/3.
+has(Child, Value, Type):-
+	concept(Child),
+	is_a_rec(Child, Parent),
+	concept(Parent),
+	has(Parent, Value, Type).
+
+has(living_creature, biological_processes, true).
 has(animal, cells, animal_cells).
 
 has(warmblooded, temperature, constant).
@@ -54,7 +67,7 @@ has(fish, reproduction, eggs).
 has(fish, skintype, scales).
 has(fish, breathing, gills).
 
-has(reptile, reproduction, eggs.
+has(reptile, reproduction, eggs).
 has(reptile, breathing, lungs).
 
 has(human, diet, omnivore).
@@ -75,6 +88,8 @@ has(seahorse, fins, between(2,4)).
 
 has(john, sex, male).
 has(mary, sex, female).
+
+
 
 is_a(living_creature, thing).
 is_a(animal, living_creature).

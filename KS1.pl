@@ -3,50 +3,23 @@
 % Cornelis Boon (10561145)
 %
 % Date: 31-3-2015
-
+:- consult('database.pl').
 
 % concepts
 :- dynamic concept/1.
-
-concept(mammal).
-concept(bird).
-concept(thing).
-concept(blahtje).
-concept(something).
-
 % attributes of a mammal
 :- dynamic has/3.
-
-has(mammal, reproduction, birth).
-has(mammal, skintype, hair).
-has(mammal, limbcount, between(2,4)).
-has(mammal, breathing, lungs).
-
-has(something, reproduction, birth).
-has(something, skintype, hair).
-has(something, limbcount, between(2,4)).
-has(something, breathing, lungs).
-has(something, att2, val1).
+%inheritance relations.
+:- dynamic is_a/1.
 
 
-% attributes of a bird
-has(bird, breathing , lungs).
-has(bird, wings, true).
 
-has(thingy, wings, true).
-
-has(Child, Value, Type):-
-	concept(Child),
-	is_a_rec(Child, Parent),
-	concept(Parent),
-	has(Parent, Value, Type).
 
 has_all(Concept, Content):-
 	setof([Value,Type], has(Concept, Value, Type), Content), !.
 
 has_all(_, []).
 
-is_a(blahtje, mammal).
 
 
 %%%%%%%%%%%%%%%%%%%
@@ -153,7 +126,8 @@ show_ancestors([Ancestor|OtherContent]):-
 % adds a new rule
 add_concept(Concept):-
     \+concept(Concept),
-    assert(concept(Concept)).
+    assert(concept(Concept)),
+    assert(is_a(Concept, thing)).
 
 
 add_relation(Child, Parent):-
@@ -200,7 +174,11 @@ show([Concept|Concepts], MoreConcepts):-
 go1:-
     add_concept(plant),
     show(plant).
-go2.
+%Adds a fully subsumed concept
+go2:- 
+	add_concept(ape),
+	has_all(mammal, Attributes),
+	
 go3.
 go4.
 go5.
