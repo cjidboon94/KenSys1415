@@ -92,6 +92,28 @@ has(mary, sex, female).
 
 
 is_a(living_creature, thing).
+is_a(animal, thing).
+is_a(warmblooded, thing).
+is_a(coldblooded, thing).
+is_a(mammal, thing).
+is_a(bird, thing).
+is_a(reptile, thing).
+is_a(fish, thing).
+is_a(amphibian, thing).
+is_a(toad, thing).
+is_a(frog, thing).
+is_a(human, thing).
+is_a(cat, thing).
+is_a(elephant, thing).
+is_a(eagle, thing).
+is_a(swallow, thing).
+is_a(eel, thing).
+is_a(seahorse, thing).
+is_a(crocodile, thing).
+is_a(turtle, thing).
+is_a(john, thing).
+is_a(mary, thing).
+
 is_a(animal, living_creature).
 is_a(warmblooded, animal).
 is_a(coldblooded, animal).
