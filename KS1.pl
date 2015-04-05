@@ -2,10 +2,8 @@
 % Koen van der Keijl (10555900)
 % Cornelis Boon (10561145)
 %
-% Date: 31-3-2015
+% Date: 5-4-2015
 :- consult('database.pl').
-
-
 
 
 has_all(Concept, Content):-
@@ -64,7 +62,7 @@ is_child(Concept, Parent):-
     concept(Concept), concept(Parent),
     is_all(Concept, Content),
     member(Parent, Content),
-    has_most_wrapper(Content, Parent), !.
+    has_most_wrapper(Content, Parent).
 
 has_most_wrapper(Content, Parent):-
    has_most(Content, _, -1, Parent).
