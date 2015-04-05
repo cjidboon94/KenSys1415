@@ -124,13 +124,15 @@ has_most([_|OtherContent], Parent, CurrentLen, Result):-
 % database operations
 %%%%%%%%%%%%%%%%%%%%%
 
+
+
 % shows the content of a concept
 show(Concept):-
     has_all(Concept, Content),
     is_all(Concept, Content2),
-    print('Attributes: \n'), show_attributes(Content),
-    print('\nAncestors: \n'), show_ancestors(Content2),
-    print('\nParent: \n'), is_child(Concept,Parent), print(Parent).
+    print('Attributes:'), nl, show_attributes(Content),
+    print('Ancestors:'), nl, show_ancestors(Content2),
+    print('Parent:'), is_child(Concept,Parent), print(Parent), nl, nl.
 
 
 show_attributes([]).
@@ -173,10 +175,20 @@ add_attribute(Concept, Type, Value):-
     assert(has(Concept, Type, Value)).
 
 add_attribute(Concept, Type, Value):-
-    has(Concept, Type, between(Min, Max)), between(Min, Max, Value),
-    (retract(has(Concept, Type, between(Min, Max))); \+retract(has(Concept, Type, between(Min, Max)))),
-    assert(has(Concept, Type, Value)).
+     has(Concept, Type, between(Min, Max)), between(Min, Max, Value),
+     (retract(has(Concept, Type, between(Min, Max))); \+retract(has(Concept, Type, between(Min, Max)))),
+     assert(has(Concept, Type, Value)).
 
+
+show :-
+	findall(Concept, concept(Concept), Concepts),
+	show(Concepts, _).
+
+show([], []).
+show([Concept|Concepts], MoreConcepts):-
+	print('Concept:'), print(Concept), nl,
+	show(Concept),
+	show(Concepts, MoreConcepts).
 
 %%%%%%%%%%%%%%%%%%%%%
 % shortcuts
@@ -186,3 +198,9 @@ add_attribute(Concept, Type, Value):-
 go1:-
     add_concept(plant),
     show(plant).
+go2.
+go3.
+go4.
+go5.
+
+
