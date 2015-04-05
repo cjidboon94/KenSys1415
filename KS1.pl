@@ -195,15 +195,15 @@ add_attribute(Concept, Type, Value):-
 
 
 show :-
-	findall(Concept, concept(Concept), Concepts),
-	show(Concepts, _).
+    findall(Concept, concept(Concept), Concepts),
+    show(Concepts, _), !.
 
-show([], []).
+show([], []):- !.
 show([Concept|Concepts], MoreConcepts):-
-	print('Concept: '), print(Concept), nl,nl,
-	show(Concept),
-	print('======================='), nl,
-	show(Concepts, MoreConcepts).
+    print('Concept: '), print(Concept), nl,nl,
+    show(Concept),
+    print('======================='), nl,
+    show(Concepts, MoreConcepts).
 
 %%%%%%%%%%%%%%%%%%%%%
 % shortcuts
