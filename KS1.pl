@@ -5,13 +5,6 @@
 % Date: 31-3-2015
 :- consult('database.pl').
 
-% concepts
-:- dynamic concept/1.
-% attributes of a mammal
-:- dynamic has/3.
-%inheritance relations.
-:- dynamic is_a/1.
-
 
 
 
@@ -20,12 +13,12 @@ has_all(Concept, Content):-
 
 has_all(_, []).
 
-
-
 %%%%%%%%%%%%%%%%%%%
 % inheritance rules
 %%%%%%%%%%%%%%%%%%%
-is_a_rec(Child,Parent):- is_a(Child, Parent).
+is_a_rec(Child,Parent):-
+    concept(Child), concept(Parent),
+    is_a(Child, Parent).
 
 is_a_rec(Child,Parent):-
     concept(Parent),
@@ -38,12 +31,6 @@ is_a_wrapper(Child, Parent):-
     concept(Child), concept(Parent),
     \+is_a_rec(Parent, Child),
     is_a_rec(Child, Parent).
-
-is_a_wrapper(Child, Parent):-
-    concept(Child), concept(Parent),
-    Parent \= Child,
-    \+is_a_rec(Parent, Child),
-    \+setof(_, has(Parent, _, _), _).
 
 is_a_wrapper(Child, Parent):-
     concept(Child), concept(Parent),
@@ -104,9 +91,9 @@ has_most([_|OtherContent], Parent, CurrentLen, Result):-
 show(Concept):-
     has_all(Concept, Content),
     is_all(Concept, Content2),
-    print('Attributes:'), nl, show_attributes(Content),nl,
-    print('Ancestors:'), nl, show_ancestors(Content2),nl,
-    print('Parent:'), is_child(Concept,Parent), print(Parent), nl, nl.
+    print('Attributes: '), nl, show_attributes(Content),nl,
+    print('Ancestors: '), nl, show_ancestors(Content2),nl,
+    print('Parent: '), (is_child(Concept,Parent), print(Parent), nl, nl); (print('none'), nl), !.
 
 
 show_attributes([]).
@@ -133,16 +120,27 @@ add_concept(Concept):-
 add_relation(Child, Parent):-
     \+is_a_rec(Child, Parent),
     \+is_a_rec(Parent, Child),
-    %facts_match_wrapper(Child, Parent),
+    facts_match_wrapper(Child, Parent),
     assert(is_a(Child, Parent)).
 
 facts_match_wrapper(Child, Parent):-
     has_all(Child, Content),
-    facts_match(Parent, Content).
+    facts_match(Content, Parent).
 
 facts_match([], _).
 
-%facts_match([[Type, Value]|OtherFacts], Parent):-
+facts_match([[Type, _]|OtherFacts], Parent):-
+    \+has(Parent, Type, _), !,
+    facts_match(OtherFacts, Parent).
+
+facts_match([[Type, Value]|OtherFacts], Parent):-
+    has(Parent, Type, Value), !,
+    facts_match(OtherFacts, Parent).
+
+facts_match([[Type, Value]|OtherFacts], Parent):-
+    has(Parent, Type, between(Min, Max)),
+    between(Min, Max, Value),
+    facts_match(OtherFacts, Parent).
 
 % adds a new attribute
 add_attribute(Concept, Type, Value):-
@@ -156,15 +154,15 @@ add_attribute(Concept, Type, Value):-
 
 
 show :-
-	findall(Concept, concept(Concept), Concepts),
-	show(Concepts, _).
+    findall(Concept, concept(Concept), Concepts),
+    show(Concepts, _), !.
 
-show([], []).
+show([], []):- !.
 show([Concept|Concepts], MoreConcepts):-
-	print('Concept:'), print(Concept), nl,nl,
-	show(Concept),
-	print('======================='), nl,
-	show(Concepts, MoreConcepts).
+    print('Concept: '), print(Concept), nl,nl,
+    show(Concept),
+    print('======================='), nl,
+    show(Concepts, MoreConcepts).
 
 %%%%%%%%%%%%%%%%%%%%%
 % shortcuts
