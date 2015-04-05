@@ -4,6 +4,7 @@
 %
 % Date: 31-3-2015
 
+
 % concepts
 :- dynamic concept/1.
 
@@ -131,8 +132,8 @@ has_most([_|OtherContent], Parent, CurrentLen, Result):-
 show(Concept):-
     has_all(Concept, Content),
     is_all(Concept, Content2),
-    print('Attributes:'), nl, show_attributes(Content),
-    print('Ancestors:'), nl, show_ancestors(Content2),
+    print('Attributes:'), nl, show_attributes(Content),nl,
+    print('Ancestors:'), nl, show_ancestors(Content2),nl,
     print('Parent:'), is_child(Concept,Parent), print(Parent), nl, nl.
 
 
@@ -174,8 +175,9 @@ show :-
 
 show([], []).
 show([Concept|Concepts], MoreConcepts):-
-	print('Concept:'), print(Concept), nl,
+	print('Concept:'), print(Concept), nl,nl,
 	show(Concept),
+	print('======================='), nl,
 	show(Concepts, MoreConcepts).
 
 %%%%%%%%%%%%%%%%%%%%%
