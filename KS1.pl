@@ -23,14 +23,15 @@ has(mammal, breathing, lungs).
 
 has(something, reproduction, birth).
 has(something, skintype, hair).
-has(something, limbcount, between(2,4)).
+has(something, limbcount, 6).
 has(something, breathing, lungs).
-has(something, att2, val1).
 
 
 % attributes of a bird
 has(bird, breathing , lungs).
 has(bird, wings, true).
+has(bird, reproduction, lowl).
+
 
 has(thingy, wings, true).
 
@@ -45,6 +46,7 @@ has_all(Concept, Content):-
 
 has_all(_, []).
 
+:- dynamic is_a/2.
 is_a(blahtje, mammal).
 
 
@@ -158,16 +160,27 @@ add_concept(Concept):-
 add_relation(Child, Parent):-
     \+is_a_rec(Child, Parent),
     \+is_a_rec(Parent, Child),
-    %facts_match_wrapper(Child, Parent),
+    facts_match_wrapper(Child, Parent),
     assert(is_a(Child, Parent)).
 
 facts_match_wrapper(Child, Parent):-
     has_all(Child, Content),
-    facts_match(Parent, Content).
+    facts_match(Content, Parent).
 
 facts_match([], _).
 
-%facts_match([[Type, Value]|OtherFacts], Parent):-
+facts_match([[Type, _]|OtherFacts], Parent):-
+    \+has(Parent, Type, _), !,
+    facts_match(OtherFacts, Parent).
+
+facts_match([[Type, Value]|OtherFacts], Parent):-
+    has(Parent, Type, Value), !,
+    facts_match(OtherFacts, Parent).
+
+facts_match([[Type, Value]|OtherFacts], Parent):-
+    has(Parent, Type, between(Min, Max)),
+    between(Min, Max, Value),
+    facts_match(OtherFacts, Parent).
 
 % adds a new attribute
 add_attribute(Concept, Type, Value):-
@@ -186,7 +199,7 @@ show :-
 
 show([], []).
 show([Concept|Concepts], MoreConcepts):-
-	print('Concept:'), print(Concept), nl,
+	print('Concept: '), print(Concept), nl,
 	show(Concept),
 	show(Concepts, MoreConcepts).
 
