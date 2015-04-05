@@ -1,6 +1,6 @@
 % Authors:
 % Koen van der Keijl (10555900)
-% Cornelis Boon (10561145)
+% Cornelis Boon
 %
 % Date: 31-3-2015
 
@@ -34,15 +34,9 @@ has(bird, wings, true).
 
 has(thingy, wings, true).
 
-has(Child, Value, Type):- 
-	concept(Child), 
-	is_a_rec(Child, Parent), 
-	concept(Parent), 
-	has(Parent, Value, Type).
+has(Child, Value, Type):- concept(Child), is_a_rec(Child, Parent), concept(Parent), has(Parent, Value, Type).
 
-has_all(Concept, Content):- 
-	setof([Value,Type], has(Concept, Value, Type), Content), !.
-
+has_all(Concept, Content):- setof([Value,Type], has(Concept, Value, Type), Content), !.
 has_all(_, []).
 
 is_a(blahtje, mammal).
@@ -98,7 +92,6 @@ is_all(Concept, Content):-
 
 is_all(_, []).
 
-
 is_child(Concept, Parent):-
     concept(Concept),
     is_all(Concept, Content),
@@ -125,15 +118,13 @@ has_most([_|OtherContent], Parent, CurrentLen, Result):-
 % database operations
 %%%%%%%%%%%%%%%%%%%%%
 
-
-
 % shows the content of a concept
 show(Concept):-
     has_all(Concept, Content),
     is_all(Concept, Content2),
-    print('Attributes:'), nl, show_attributes(Content),
-    print('Ancestors:'), nl, show_ancestors(Content2),
-    print('Parent:'), is_child(Concept,Parent), print(Parent), nl, nl.
+    print('Attributes: \n'), show_attributes(Content),
+    print('\nAncestors: \n'), show_ancestors(Content2),
+    print('\nParent: \n'), is_child(Concept,Parent), print(Parent).
 
 
 show_attributes([]).
@@ -163,32 +154,16 @@ add_attribute(Concept, Type, Value):-
     assert(has(Concept, Type, Value)).
 
 add_attribute(Concept, Type, Value):-
-     has(Concept, Type, between(Min, Max)), between(Min, Max, Value),
-     (retract(has(Concept, Type, between(Min, Max))); \+retract(has(Concept, Type, between(Min, Max)))),
-     assert(has(Concept, Type, Value)).
+    has(Concept, Type, between(Min, Max)), between(Min, Max, Value),
+    (retract(has(Concept, Type, between(Min, Max))); \+retract(has(Concept, Type, between(Min, Max)))),
+    assert(has(Concept, Type, Value)).
 
-
-show :-
-	findall(Concept, concept(Concept), Concepts),
-	show(Concepts, _).
-
-show([], []).
-show([Concept|Concepts], MoreConcepts):-
-	print('Concept:'), print(Concept), nl,
-	show(Concept),
-	show(Concepts, MoreConcepts).
 
 %%%%%%%%%%%%%%%%%%%%%
 % shortcuts
 %%%%%%%%%%%%%%%%%%%%%
 
 % Adds a fully new concept
-go1:-
+go1():-
     add_concept(plant),
     show(plant).
-go2.
-go3.
-go4.
-go5.
-
-
