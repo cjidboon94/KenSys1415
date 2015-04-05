@@ -1,8 +1,10 @@
-:- dynamic concept/1.
-% attributes of a mammal
-%inheritance relations.
-:- dynamic is_a/1.
+% Authors:
+% Koen van der Keijl (10555900)
+% Cornelis Boon (10561145)
+%
+% Date: 5-4-2015
 
+:- dynamic concept/1.
 
 concept(thing).
 concept(living_creature).
@@ -35,6 +37,8 @@ concept(seahorse).
 
 concept(john).
 concept(mary).
+
+% attributes of a mammal
 
 :- dynamic has/3.
 has(Child, Value, Type):-
@@ -89,8 +93,9 @@ has(seahorse, fins, between(2,4)).
 has(john, sex, male).
 has(mary, sex, female).
 
+%inheritance relations.
 
-
+:- dynamic is_a/2.
 is_a(living_creature, thing).
 is_a(animal, thing).
 is_a(warmblooded, thing).

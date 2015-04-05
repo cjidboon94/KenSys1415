@@ -2,56 +2,14 @@
 % Koen van der Keijl (10555900)
 % Cornelis Boon (10561145)
 %
-% Date: 31-3-2015
+% Date: 5-4-2015
+:- consult('database.pl').
 
-
-% concepts
-:- dynamic concept/1.
-
-concept(mammal).
-concept(bird).
-concept(thing).
-concept(blahtje).
-concept(something).
-
-% attributes of a mammal
-:- dynamic has/3.
-
-has(mammal, reproduction, birth).
-has(mammal, skintype, hair).
-has(mammal, limbcount, between(2,4)).
-has(mammal, breathing, lungs).
-
-has(something, reproduction, birth).
-has(something, skintype, hair).
-has(something, limbcount, 3).
-has(something, breathing, lungs).
-
-
-% attributes of a bird
-has(bird, breathing , lungs).
-has(bird, wings, true).
-has(bird, reproduction, lowl).
-
-
-has(thingy, wings, true).
-
-has(Child, Value, Type):-
-	concept(Child),
-	is_a_rec(Child, Parent),
-	concept(Parent),
-	has(Parent, Value, Type).
-
+%Finds all attributes.
 has_all(Concept, Content):-
 	setof([Value,Type], has(Concept, Value, Type), Content), !.
 
 has_all(_, []).
-
-:- dynamic is_a/2.
-is_a(mammal, thing).
-is_a(bird, thing).
-is_a(blahtje, thing).
-
 
 %%%%%%%%%%%%%%%%%%%
 % inheritance rules
@@ -103,8 +61,8 @@ is_all(_, []).
 is_child(Concept, Parent):-
     concept(Concept), concept(Parent),
     is_all(Concept, Content),
-    member(Parent, Content), !,
-    has_most_wrapper(Content, Parent), !.
+    member(Parent, Content),
+    has_most_wrapper(Content, Parent).
 
 has_most_wrapper(Content, Parent):-
    has_most(Content, _, -1, Parent).
@@ -125,15 +83,28 @@ has_most([_|OtherContent], Parent, CurrentLen, Result):-
 % database operations
 %%%%%%%%%%%%%%%%%%%%%
 
-
-
 % shows the content of a concept
 show(Concept):-
+	print('Concept: '), print(Concept), nl,nl,
     has_all(Concept, Content),
     is_all(Concept, Content2),
     print('Attributes: '), nl, show_attributes(Content),nl,
     print('Ancestors: '), nl, show_ancestors(Content2),nl,
     print('Parent: '), (is_child(Concept,Parent), print(Parent), nl, nl); (print('none'), nl), !.
+
+%Shows everything in the database.
+show:-
+    findall(Concept, concept(Concept), Concepts),
+    show(Concepts, _), !.
+
+%Prints everything prolog knows about the concepts in the list.
+show([], []).
+
+show([Concept|Concepts], MoreConcepts):-
+    print('Concept: '), print(Concept), nl,nl,
+    show(Concept),
+    print('======================='), nl,
+    show(Concepts, MoreConcepts).
 
 
 show_attributes([]).
@@ -192,18 +163,6 @@ add_attribute(Concept, Type, Value):-
      (retract(has(Concept, Type, between(Min, Max))); \+retract(has(Concept, Type, between(Min, Max)))),
      assert(has(Concept, Type, Value)).
 
-
-show :-
-	findall(Concept, concept(Concept), Concepts),
-	show(Concepts, _).
-
-show([], []).
-show([Concept|Concepts], MoreConcepts):-
-	print('Concept: '), print(Concept), nl,nl,
-	show(Concept),
-	print('======================='), nl,
-	show(Concepts, MoreConcepts).
-
 %%%%%%%%%%%%%%%%%%%%%
 % shortcuts
 %%%%%%%%%%%%%%%%%%%%%
@@ -211,10 +170,32 @@ show([Concept|Concepts], MoreConcepts):-
 % Adds a fully new concept
 go1:-
     add_concept(plant),
-    show(plant).
-go2.
-go3.
-go4.
-go5.
+    show(plant), !.
 
+%Adds a fully subsumed concept
+go2:-
+	add_concept(ape),
 
+	add_relation(ape, mammal),
+	add_attribute(ape, limbs, 4),
+	show(ape), !.
+%Adds another fully subsumed concept.
+go3:-
+	add_concept(tit),
+	add_attribute(tit, wings, true),
+	add_attribute(tit, temperature, constant),
+	add_attribute(tit, cells, animal_cells),
+	add_attribute(tit, biological_processes, true),
+	show(tit), !.
+%Adds a concept with missing attributes but inherits everything.
+go4:- 
+	((go1, print('=================='), nl) ; \+ go1),
+	add_attribute(plant, cells, plant_cells),
+	add_attribute(plant, biological_processes, true),
+	add_concept(flower),
+	add_relation(flower, plant), 
+	show(flower), !.
+%Adds a fully new concept.
+go5:-
+	add_concept(object),
+	show(object), !.
