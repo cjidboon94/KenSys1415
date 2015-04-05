@@ -34,8 +34,8 @@ has(thingy, wings, true).
 
 has(Child, Value, Type):- concept(Child), is_a_rec(Child, Parent), concept(Parent), has(Parent, Value, Type).
 
-has_all(Concept, Content):- setof([Value,Type], has(Concept, Value, Type), Content).
-has_all(Concept, []):- \+setof(_, has(Concept, _, _), _).
+has_all(Concept, Content):- setof([Value,Type], has(Concept, Value, Type), Content), !.
+has_all(_, []).
 
 is_a(blahtje, mammal).
 
@@ -68,15 +68,36 @@ is_a2(Child, [[Type,between(LowerValue, UpperValue)]|Tail]):-
     between(LowerValue, UpperValue, Value), !, 
     is_a2(Child, Tail).
 
-is_all(Concept, Content):- setof(Parent, is_a_wrapper(Concept, Parent), Content).
-is_all(Concept, []):- \+setof(_, is_a_wrapper(Concept, _), _).
+is_all(Concept, Content):- setof(Parent, is_a_wrapper(Concept, Parent), Content), !.
+is_all(_, []).
+
+is_child(Concept, Parent):- concept(Concept), is_all(Concept, Content), member(Parent, Content), print(Content), !, has_most(Content, Parent, 1), !, concept(Parent).
+
+%this always returns true for some reason.
+has_most([], _, _):- !.
+has_most([Ancestor|OtherContent], Ancestor, CurrentLen):-
+   has_all(Ancestor, Content2),
+   length(Content2, Len),
+   CurrentLen < Len, !,
+   has_most(OtherContent, Ancestor, Len).
+   
+has_most([X|OtherContent], Parent, CurrentLen):-
+   !, has_most(OtherContent, Parent, CurrentLen).
+
+
 
 %%%%%%%%%%%%%%%%%%%%%
 % database operations
 %%%%%%%%%%%%%%%%%%%%%
 
 % shows the content of a concept
-show(Concept):- has_all(Concept, Content), is_all(Concept, Content2), print(Content), print(Content2).
+show(Concept):- has_all(Concept, Content), is_all(Concept, Content2), print('Attributes: \n'), show_attributes(Content), print('\nAncestors: \n'), show_ancestors(Content2).
+
+show_attributes([]).
+show_attributes([[Type, Value]|OtherContent]):- print(Type), print(': '), print(Value), print('\n'), show_attributes(OtherContent).
+
+show_ancestors([]).
+show_ancestors([Ancestor|OtherContent]):- print(Ancestor), print('\n'), show_ancestors(OtherContent).
 
 % adds a new rule
 add_concept(Concept):- \+concept(Concept), assert(concept(Concept)).
