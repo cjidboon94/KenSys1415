@@ -63,7 +63,7 @@ is_all(_, []).
 is_child(Concept, Parent):-
     concept(Concept), concept(Parent),
     is_all(Concept, Content),
-    member(Parent, Content), !,
+    member(Parent, Content),
     has_most_wrapper(Content, Parent), !.
 
 has_most_wrapper(Content, Parent):-
@@ -87,6 +87,7 @@ has_most([_|OtherContent], Parent, CurrentLen, Result):-
 
 % shows the content of a concept
 show(Concept):-
+	print('Concept: '), print(Concept), nl,nl,
     has_all(Concept, Content),
     is_all(Concept, Content2),
     print('Attributes: '), nl, show_attributes(Content),nl,
@@ -169,16 +170,20 @@ add_attribute(Concept, Type, Value):-
 % Adds a fully new concept
 go1:-
     add_concept(plant),
-    show(plant).
+    show(plant), !.
 
 %Adds a fully subsumed concept
-go2:- 
+go2:-
 	add_concept(ape),
+
 	add_relation(ape, mammal),
-	add_attribute(ape, limbs, 4).
+	add_attribute(ape, limbs, 4),
+	show(ape), !.
 go3:-
-	add_concept(rabbit),
-	add_attribute(rabbit, )
+	add_concept(tit),
+	add_attribute(tit, wings, true),
+	add_attribute(tit, temperature, constant),
+	show(tit), !.
 go4.
 go5.
 
