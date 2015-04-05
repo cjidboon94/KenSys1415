@@ -1,6 +1,6 @@
 % Authors:
 % Koen van der Keijl (10555900)
-% Cornelis Boon (10561145)
+% Cornelis Boon
 %
 % Date: 31-3-2015
 
@@ -34,15 +34,9 @@ has(bird, wings, true).
 
 has(thingy, wings, true).
 
-has(Child, Value, Type):- 
-	concept(Child), 
-	is_a_rec(Child, Parent), 
-	concept(Parent), 
-	has(Parent, Value, Type).
+has(Child, Value, Type):- concept(Child), is_a_rec(Child, Parent), concept(Parent), has(Parent, Value, Type).
 
-has_all(Concept, Content):- 
-	setof([Value,Type], has(Concept, Value, Type), Content), !.
-
+has_all(Concept, Content):- setof([Value,Type], has(Concept, Value, Type), Content), !.
 has_all(_, []).
 
 is_a(blahtje, mammal).
@@ -97,7 +91,6 @@ is_all(Concept, Content):-
     setof(Parent, is_a_wrapper(Concept, Parent), Content), !.
 
 is_all(_, []).
-
 
 is_child(Concept, Parent):-
     concept(Concept),
@@ -171,6 +164,6 @@ add_attribute(Concept, Type, Value):-
 %%%%%%%%%%%%%%%%%%%%%
 
 % Adds a fully new concept
-go1:-
+go1():-
     add_concept(plant),
     show(plant).
