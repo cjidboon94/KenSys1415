@@ -35,13 +35,13 @@ has(bird, wings, true).
 
 has(thingy, wings, true).
 
-has(Child, Value, Type):- 
-	concept(Child), 
-	is_a_rec(Child, Parent), 
-	concept(Parent), 
+has(Child, Value, Type):-
+	concept(Child),
+	is_a_rec(Child, Parent),
+	concept(Parent),
 	has(Parent, Value, Type).
 
-has_all(Concept, Content):- 
+has_all(Concept, Content):-
 	setof([Value,Type], has(Concept, Value, Type), Content), !.
 
 has_all(_, []).
@@ -101,11 +101,10 @@ is_all(_, []).
 
 
 is_child(Concept, Parent):-
-    concept(Concept),
+    concept(Concept), concept(Parent),
     is_all(Concept, Content),
     member(Parent, Content), !,
-    has_most_wrapper(Content, Parent), !,
-    concept(Parent).
+    has_most_wrapper(Content, Parent), !.
 
 has_most_wrapper(Content, Parent):-
    has_most(Content, _, -1, Parent).
@@ -143,20 +142,33 @@ show_attributes([[Type, Value]|OtherContent]):-
     print(Type), print(': '), print(Value), print('\n'),
     show_attributes(OtherContent).
 
+
 show_ancestors([]).
 
 show_ancestors([Ancestor|OtherContent]):-
     print(Ancestor), print('\n'),
     show_ancestors(OtherContent).
 
+
 % adds a new rule
 add_concept(Concept):-
     \+concept(Concept),
     assert(concept(Concept)).
 
+
 add_relation(Child, Parent):-
     \+is_a_rec(Child, Parent),
+    \+is_a_rec(Parent, Child),
+    %facts_match_wrapper(Child, Parent),
     assert(is_a(Child, Parent)).
+
+facts_match_wrapper(Child, Parent):-
+    has_all(Child, Content),
+    facts_match(Parent, Content).
+
+facts_match([], _).
+
+%facts_match([[Type, Value]|OtherFacts], Parent):-
 
 % adds a new attribute
 add_attribute(Concept, Type, Value):-
