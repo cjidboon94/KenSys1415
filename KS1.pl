@@ -1,6 +1,6 @@
 % Authors:
 % Koen van der Keijl (10555900)
-% Cornelis Boon
+% Cornelis Boon (10561145)
 %
 % Date: 31-3-2015
 
@@ -32,9 +32,15 @@ has(bird, wings, true).
 
 has(thingy, wings, true).
 
-has(Child, Value, Type):- concept(Child), is_a_rec(Child, Parent), concept(Parent), has(Parent, Value, Type).
+has(Child, Value, Type):- 
+	concept(Child), 
+	is_a_rec(Child, Parent), 
+	concept(Parent), 
+	has(Parent, Value, Type).
 
-has_all(Concept, Content):- setof([Value,Type], has(Concept, Value, Type), Content), !.
+has_all(Concept, Content):- 
+	setof([Value,Type], has(Concept, Value, Type), Content), !.
+
 has_all(_, []).
 
 is_a(blahtje, mammal).
@@ -51,8 +57,16 @@ is_a_rec(Child,Parent):-
 
 % wrapper rule for is_a
 is_a_wrapper(Child, Parent):- is_a_rec(Child, Parent).
-is_a_wrapper(Child, Parent):- concept(Child), concept(Parent), Parent \= Child, \+setof(_, has(Parent, _, _), _).
-is_a_wrapper(Child, Parent):- concept(Child), concept(Parent), Parent \= Child, setof([Type,Value], has(Parent, Type, Value), ParentAtributes), is_a2(Child, ParentAtributes).
+is_a_wrapper(Child, Parent):- 
+	concept(Child), concept(Parent), 
+	Parent \= Child, 
+	\+setof(_, has(Parent, _, _), _).
+
+is_a_wrapper(Child, Parent):- 
+	concept(Child), concept(Parent), 
+	Parent \= Child, 
+	setof([Type,Value], has(Parent, Type, Value), ParentAtributes), 
+	is_a2(Child, ParentAtributes).
 
 % base case, all atributes have been checked
 is_a2(_, []):- !.
@@ -71,7 +85,13 @@ is_a2(Child, [[Type,between(LowerValue, UpperValue)]|Tail]):-
 is_all(Concept, Content):- setof(Parent, is_a_wrapper(Concept, Parent), Content), !.
 is_all(_, []).
 
-is_child(Concept, Parent):- concept(Concept), is_all(Concept, Content), member(Parent, Content), print(Content), !, has_most(Content, Parent, 1), !, concept(Parent).
+is_child(Concept, Parent):- 
+	concept(Concept), 
+	is_all(Concept, Content), 
+	member(Parent, Content), 
+	print(Content), !, 
+	has_most(Content, Parent, 1), !, 
+	concept(Parent).
 
 %this always returns true for some reason.
 has_most([], _, _):- !.
@@ -81,7 +101,7 @@ has_most([Ancestor|OtherContent], Ancestor, CurrentLen):-
    CurrentLen < Len, !,
    has_most(OtherContent, Ancestor, Len).
    
-has_most([X|OtherContent], Parent, CurrentLen):-
+has_most([_|OtherContent], Parent, CurrentLen):-
    !, has_most(OtherContent, Parent, CurrentLen).
 
 
@@ -91,17 +111,41 @@ has_most([X|OtherContent], Parent, CurrentLen):-
 %%%%%%%%%%%%%%%%%%%%%
 
 % shows the content of a concept
-show(Concept):- has_all(Concept, Content), is_all(Concept, Content2), print('Attributes: \n'), show_attributes(Content), print('\nAncestors: \n'), show_ancestors(Content2).
+show(Concept):- 
+	has_all(Concept, Content), 
+	is_all(Concept, Content2), 
+	print('Attributes: \n'), 
+	show_attributes(Content), 
+	print('\nAncestors: \n'), 
+	show_ancestors(Content2).
 
 show_attributes([]).
-show_attributes([[Type, Value]|OtherContent]):- print(Type), print(': '), print(Value), print('\n'), show_attributes(OtherContent).
+show_attributes([[Type, Value]|OtherContent]):- 
+	print(Type), 
+	print(': '), 
+	print(Value), 
+	print('\n'), 
+	show_attributes(OtherContent).
 
 show_ancestors([]).
-show_ancestors([Ancestor|OtherContent]):- print(Ancestor), print('\n'), show_ancestors(OtherContent).
+show_ancestors([Ancestor|OtherContent]):- 
+	print(Ancestor), 
+	print('\n'), 
+	show_ancestors(OtherContent).
 
 % adds a new rule
-add_concept(Concept):- \+concept(Concept), assert(concept(Concept)).
+add_concept(Concept):- 
+	\+concept(Concept), 
+	assert(concept(Concept)).
 
 % adds a new attribute
-add_attribute(Concept, Type, Value):- \+has(Concept, Type, _), assert(has(Concept, Type, Value)).
-add_attribute(Concept, Type, Value):- has(Concept, Type, between(Min, Max)), between(Min, Max, Value), (retract(has(Concept, Type, between(Min, Max))); \+retract(has(Concept, Type, between(Min, Max)))), assert(has(Concept, Type, Value)).
+add_attribute(Concept, Type, Value):- 
+	\+has(Concept, Type, _), 
+	assert(has(Concept, Type, Value)).
+
+add_attribute(Concept, Type, Value):- 
+	has(Concept, Type, between(Min, Max)), 
+	between(Min, Max, Value), 
+	(retract(has(Concept, Type, between(Min, Max))); 
+	\+retract(has(Concept, Type, between(Min, Max)))), 
+	assert(has(Concept, Type, Value)).
