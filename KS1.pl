@@ -4,6 +4,7 @@
 %
 % Date: 31-3-2015
 
+
 % concepts
 :- dynamic concept/1.
 
@@ -23,7 +24,7 @@ has(mammal, breathing, lungs).
 
 has(something, reproduction, birth).
 has(something, skintype, hair).
-has(something, limbcount, 6).
+has(something, limbcount, 3).
 has(something, breathing, lungs).
 
 
@@ -47,13 +48,18 @@ has_all(Concept, Content):-
 has_all(_, []).
 
 :- dynamic is_a/2.
-is_a(blahtje, mammal).
+is_a(mammal, thing).
+is_a(bird, thing).
+is_a(blahtje, thing).
+is_a(something, thing).
 
 
 %%%%%%%%%%%%%%%%%%%
 % inheritance rules
 %%%%%%%%%%%%%%%%%%%
-is_a_rec(Child,Parent):- is_a(Child, Parent).
+is_a_rec(Child,Parent):-
+    concept(Child), concept(Parent),
+    is_a(Child, Parent).
 
 is_a_rec(Child,Parent):-
     concept(Parent),
@@ -66,12 +72,6 @@ is_a_wrapper(Child, Parent):-
     concept(Child), concept(Parent),
     \+is_a_rec(Parent, Child),
     is_a_rec(Child, Parent).
-
-is_a_wrapper(Child, Parent):-
-    concept(Child), concept(Parent),
-    Parent \= Child,
-    \+is_a_rec(Parent, Child),
-    \+setof(_, has(Parent, _, _), _).
 
 is_a_wrapper(Child, Parent):-
     concept(Child), concept(Parent),
@@ -132,9 +132,9 @@ has_most([_|OtherContent], Parent, CurrentLen, Result):-
 show(Concept):-
     has_all(Concept, Content),
     is_all(Concept, Content2),
-    print('Attributes:'), nl, show_attributes(Content),
-    print('Ancestors:'), nl, show_ancestors(Content2),
-    print('Parent:'), is_child(Concept,Parent), print(Parent), nl, nl.
+    print('Attributes: '), nl, show_attributes(Content),nl,
+    print('Ancestors: '), nl, show_ancestors(Content2),nl,
+    print('Parent: '), (is_child(Concept,Parent), print(Parent), nl, nl); (print('none'), nl), !.
 
 
 show_attributes([]).
@@ -154,7 +154,8 @@ show_ancestors([Ancestor|OtherContent]):-
 % adds a new rule
 add_concept(Concept):-
     \+concept(Concept),
-    assert(concept(Concept)).
+    assert(concept(Concept)),
+    assert(is_a(Concept, thing)).
 
 
 add_relation(Child, Parent):-
@@ -199,8 +200,9 @@ show :-
 
 show([], []).
 show([Concept|Concepts], MoreConcepts):-
-	print('Concept: '), print(Concept), nl,
+	print('Concept: '), print(Concept), nl,nl,
 	show(Concept),
+	print('======================='), nl,
 	show(Concepts, MoreConcepts).
 
 %%%%%%%%%%%%%%%%%%%%%
