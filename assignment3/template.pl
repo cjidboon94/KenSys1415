@@ -5,11 +5,23 @@
 :- op(300, xfy, or).
 :- op(200, xfy, and).
 
+:- dynamic fact/1.
+:- consult('db.pl').
 
 /* --- A simple backward chaining rule interpreter --- */
 
+fact(nothing).
+
 is_true( P ):-
     fact( P ).
+    
+is_true(vraag(Symptom)):-
+    fact(Symptom);
+    (\+fact(Symptom),
+    write('heeft u ook last van: '), write(Symptom),
+    write('\n'), read(X),
+    X = yes,
+    assert(fact(Symptom))).
 
 is_true( P ):-
     if Condition then P,
