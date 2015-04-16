@@ -9,11 +9,20 @@
 :- op(300, xfy, or).
 :- op(200, xfy, and).
 
+%Equality checker
+oorzaak(Oorzaak, Oorzaak).
 
+%Terminals
+ziekte(malaria_tropica).
+ziekte(malaria_tertiana).
+ziekte(malaria_quartana).
+ziekte(dysenterie).
+ziekte(geelzucht).
+ziekte(polio).
 
 %%% Illnesses %%%
 %% Malaria 
-if oorzaak(muggensteek) and koorts then malaria.
+if oorzaak(Oorzaak ,muggensteek) and koorts then ziekteklasse(malaria).
 if malaria and aanvallen(regelmatig, _) then goedaardige_malaria else malaria_tropica.
 if goedaardige_malaria and aanvallen(regelmatig, 2) then malaria_tertiana.
 if goedaardige_malaria and aanvallen(regelmatig, 3) then malaria_quartana.
@@ -25,4 +34,11 @@ if darminfectie and geling then geelzucht.
 if darminfectie and verlamming then polio.
 
 %%%% Symptoms %%%
-if lichaampstemperatuur > 38 then koorts.
+if hoge(Lichaamstemperatuur) then koorts.
+hoge(Lichaamstemperatuur) :-
+	Lichaamstemperatuur >= 38.
+% If koorts and malaria ask for 'aanvallen :regelmatig of onregelmatig)'
+% If regelmatig, ask for periods (i.e. every 2 or 3 days) and assert aanvallen(regelmatig, Period).
+% If onregelmatig, assert aanvallen(onregelmatig, -1). ?
+
+
