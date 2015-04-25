@@ -11,8 +11,27 @@
 ask_for_additional_wrapper:- ask_for_additional(start).
 
 ask_for_additional(stop):- !.
-ask_for_additional(start):- !, write('geef een andere symptoom aan, of zeg, stop: '),read(Symptom), ask_for_additional(Symptom).
-ask_for_additional(LastSymptom):- !, write('geef een andere symptoom aan, of zeg, stop: '),read(Symptom), ask_for_additional(Symptom), assert(fact(Symptom(LastSymptom), true)).
+
+ask_for_additional(start):-
+	!,
+	write('geef een andere symptoom aan, of zeg, stop: '), read(Info),
+	process_info(Info),
+	ask_for_additional(Info).
+
+ask_for_additional(_):-
+	!,
+	write('geef een andere symptoom aan, of zeg, stop: '), read(Info),
+	process_info(Info),
+	ask_for_additional(Info).
+
+process_info(stop):- !.
+process_info(Info):-
+	atomic_list_concat(L,' ', Info), L = [temperature,Waarde], !,
+	atom_number(Waarde, TempValue), assert(fact(temperature(TempValue))).
+
+process_info(Info):-
+	!,
+	assert(fact(Info, true)).
 
 
 fact(nothing).
@@ -61,7 +80,4 @@ composed_fact( Condition1 and Condition2 ):-
     composed_fact( Condition1 ),
     composed_fact( Condition2 ).
 
-composed_fact( Condition1 or Condition2 ):-
-    composed_fact( Condition1 )
-    ;
-    composed_fact( Condition2 ).
+
