@@ -6,15 +6,21 @@
 :- op(200, xfy, and).
 
 :- dynamic fact/1.
+:- dynamic fact/2.
 :- consult('db.pl').
 
-/* --- A simple backward chaining rule interpreter --- */
+ask_for_additional_wrapper:- ask_for_additional(start).
+
+ask_for_additional(stop):- !.
+ask_for_additional(start):- !, write('geef een andere symptoom aan, of zeg, stop: '),read(Symptom), ask_for_additional(Symptom).
+ask_for_additional(LastSymptom):- !, write('geef een andere symptoom aan, of zeg, stop: '),read(Symptom), ask_for_additional(Symptom), assert(fact(LastSymptom, yes)).
+
 
 fact(nothing).
 
 is_true( P ):-
     fact( P ).
-    
+
 is_true(vraag(Symptom)):-
     fact(Symptom);
     (\+fact(Symptom),
