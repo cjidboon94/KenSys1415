@@ -28,7 +28,7 @@ go2:-
 	write('Voer dan true'), nl, write('dan zal dysenterie gediagnosticeerd worden'),
 	nl, go.
 
-pretty_rules_print([], _)
+pretty_rules_print([], _).
 
 pretty_rules_print([Rule|Rules], X):-
 	write('Regel '), write(X), write(': '), pretty_rule_print(Rule), nl,
