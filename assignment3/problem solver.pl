@@ -101,8 +101,8 @@ is_true(vraag(Symptom, Value, Question), _):-
     assert(fact(Symptom, X)),
     fact(Symptom, Value))).
 
-is_true(vraag(Symptom), OldCondition):-
-    is_true(vraag(Symptom, true), OldCondition).
+is_true(vraag(Symptom, Q), OldCondition):-
+    is_true(vraag(Symptom, Q, true), OldCondition).
 
 is_true(P, Conditions):-
     if Condition then P,
