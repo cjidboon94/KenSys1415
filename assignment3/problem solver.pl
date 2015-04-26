@@ -11,16 +11,18 @@ go:-
 	retractall(fact(_,_)),
 	write('Welkom bij het ziekte diagnose systeem\n'),
 	ask_for_additional_wrapper, !,
-	(is_true(ziekte(X), Rule), !, write('U heeft '), write(X),
-	 write('\n'), write(Rule));
+	(is_true(ziekte(X), Rules), !, write('U heeft '), write(X),
+	 nl,nl, write('Regels en feiten gebruikt voor afleiding:'), nl,
+	 pretty_rule_print(Rules, 1));
 	(write('Geen ziekte gevonden.')).
 
-pretty_rule_print([]).
+pretty_rule_print([], _).
 
-pretty_rule_print(Rules|Tail):-
-	write(Rules),
-	pretty_rule_print(Tail).
-
+pretty_rule_print([Rule|Rules], X):-
+	write('Regel '), write(X), write(': '), write(Rule), nl,
+	Y is X +1,
+	pretty_rule_print(Rules, Y).
+	
 ask_for_additional_wrapper:- ask_for_additional(start).
 
 ask_for_additional(stop):- !.
@@ -66,7 +68,7 @@ is_true(vraag(Symptom, Value), _):-
     (\+fact_from_abstract(Symptom, _),
      \+fact(Symptom, _),
      write('heeft u ook last van: '), write(Symptom),
-     write('\n'), read(X),
+     nl, read(X),
      assert(fact(Symptom, X)),
      (fact(Symptom, Value);
      fact_from_abstract(Symptom, Value))).
@@ -76,16 +78,17 @@ is_true(vraag(Symptom, Value), _):-
     (fact(Symptom, Value);
     (\+has_non_abstract(Symptom),
     write(Symptom), write(' (specifiek): '),
-    write('\n'), read(X),
+    nl, read(X),
     assert(fact(Symptom, X)),
     fact(Symptom, Value))).
 
 is_true(vraag(Symptom), OldCondition):-
     is_true(vraag(Symptom, true), OldCondition).
 
-is_true(P, [OldCondition, Condition then P]):-
+is_true(P, Conditions):-
     if Condition then P,
-    is_true(Condition, OldCondition).
+    is_true(Condition, OldCondition),
+    append(OldCondition, [Condition then P], Conditions).
 
 is_true( P1 and P2, OldCondition ):-
     is_true( P1, OldCondition ),
