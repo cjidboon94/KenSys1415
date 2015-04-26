@@ -29,9 +29,9 @@ if ziekteklasse(goedaardige_malaria) and vraag(aanvallen, 3) then ziekte(malaria
 
 %% Darminfectie
 if diarree then ziekteklasse(darminfectie).
-if ziekteklasse(darminfectie) and vraag(ontlasting) and vraag(slijm) and vraag(bloed) then ziekte(dysenterie).
-if ziekteklasse(darminfectie) and vraag(geling) then ziekte(geelzucht).
-if ziekteklasse(darminfectie) and vraag(verlamming) then ziekte(polio).
+if ziekteklasse(darminfectie) and vraag(slijm,  'Zit er slijm in uw ontlasting? (true/false):') and vraag(bloed, 'Zit er bloed in uw ontlasting? (true/false):') then ziekte(dysenterie).
+if ziekteklasse(darminfectie) and vraag(geling, 'Is uw huid geel? (true/false):') then ziekte(geelzucht).
+if ziekteklasse(darminfectie) and vraag(verlamming, 'Kunt u zich bewegen? (true/false):') then ziekte(polio).
 
 %%%% Symptomen Abstractie %%%
 if (temperatuur, hoog) then koorts.
