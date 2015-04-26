@@ -11,18 +11,29 @@ go:-
 	retractall(fact(_,_)),
 	write('Welkom bij het ziekte diagnose systeem\n'),
 	ask_for_additional_wrapper, !,
-	(is_true(ziekte(X), Rules), !, write('U heeft '), write(X),
+	((is_true(ziekte(X), Rules), write('U heeft '), write(X),
 	 nl,nl, write('Regels en feiten gebruikt voor afleiding:'), nl,
-	 pretty_rule_print(Rules, 1));
-	(write('Geen ziekte gevonden.')).
+	 pretty_rules_print(Rules, 1), !);
+	 write('Geen ziekte gevonden.')).
 
-pretty_rule_print([], _).
+pretty_rules_print([], _).
 
-pretty_rule_print([Rule|Rules], X):-
-	write('Regel '), write(X), write(': '), write(Rule), nl,
+pretty_rules_print([Rule|Rules], X):-
+	write('Regel '), write(X), write(': '), pretty_rule_print(Rule), nl,
 	Y is X +1,
-	pretty_rule_print(Rules, Y).
-	
+	pretty_rules_print(Rules, Y).
+
+pretty_rule_print(Condition then P):-
+	print_part(Condition), write(' dan '), write(P).
+
+print_part(vraag(X,Y) and Z):- write(' '), write((X,Y)), write('en '), print_part(Z).
+print_part(K and Z):- write(K), write(' en '), print_part(Z).
+print_part((X,Y) and Z):- write('('), write((X,Y)), write(') en '), print_part(Z).
+print_part((X,Y)):- write('('), write((X,Y)), write(')').
+print_part(vraag(X,Y)):- write('('), write((X,Y)), write(')').
+print_part(X):- write(X).
+
+
 ask_for_additional_wrapper:- ask_for_additional(start).
 
 ask_for_additional(stop):- !.
