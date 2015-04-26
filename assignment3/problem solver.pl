@@ -121,7 +121,7 @@ is_true(vraag(Symptom, Value, Question), _):-
     fact(Symptom, Value))).
 
 is_true(vraag(Symptom, Q), OldCondition):-
-    is_true(vraag(Symptom, Q, true), OldCondition).
+    is_true(vraag(Symptom, true, Q), OldCondition).
 
 
 /* Check whether something is true based on if then rules */
