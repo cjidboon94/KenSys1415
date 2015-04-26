@@ -17,7 +17,7 @@ go:-
 	 write('Geen ziekte gevonden.')).
 
 go1:-
-	write('Voer koorts in als symptoom, en vervolgens stop'), nl,
+	write('Voer \'temperatuur 45\' in als symptoom, en vervolgens stop'), nl,
 	write('Als gevraagd wordt naar of u last heeft van aanvallen'), nl,
 	write('Voer dan 2 of 3 in'), nl, write('dan zal malaria_tertiana of malaria_quartana gediagnosticeerd worden'),
 	nl, go.
