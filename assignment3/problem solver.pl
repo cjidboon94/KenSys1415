@@ -7,6 +7,7 @@
 :- dynamic fact/2.
 :- consult('db.pl').
 
+/* Main predicate */
 go:-
 	retractall(fact(_,_)),
 	write('Welkom bij het ziekte diagnose systeem\n'),
@@ -16,18 +17,22 @@ go:-
 	 pretty_rules_print(Rules, 1), !);
 	 write('Geen ziekte gevonden.')).
 
+/* Predicate with instructions for diagnosing a benign malaria*/
 go1:-
 	write('Voer \'temperatuur 45\' in als symptoom, en vervolgens stop'), nl,
 	write('Als gevraagd wordt naar of u last heeft van aanvallen'), nl,
 	write('Voer dan 2 of 3 in'), nl, write('dan zal malaria_tertiana of malaria_quartana gediagnosticeerd worden.'),
 	nl, nl, go.
 
+/* Predicate with instructions for diagnosing dysenteria */
 go2:-
 	write('Voer diarree in als symptoom, en vervolgens stop'), nl,
 	write('Als gevraagd wordt naar of u last heeft van bloed of slijm'), nl,
 	write('Voer dan true'), nl, write('dan zal dysenterie gediagnosticeerd worden.'),
 	nl, nl, go.
 
+
+/* Formats the rules used to get a diagnosis into neat lines */
 pretty_rules_print([], _).
 
 pretty_rules_print([Rule|Rules], X):-
@@ -37,6 +42,7 @@ pretty_rules_print([Rule|Rules], X):-
 
 pretty_rule_print(Condition then P):-
 	print_part(Condition), write(' dan '), write(P).
+
 
 print_part(vraag(X,Y,_) and Z):- write((X,Y)), write(' en '), print_part(Z).
 print_part(vraag(X,_) and Z):- write(X), write(' en '), print_part(Z).
@@ -50,14 +56,16 @@ print_part(X):- write(X).
 
 ask_for_additional_wrapper:- ask_for_additional(start).
 
-ask_for_additional(stop):- !.
+/*** Loops and reads symptoms ***/
 
+ask_for_additional(stop):- !.
 ask_for_additional(_):-
 	!,
 	write('Voer een ander symptoom in, of type stop: '), read(Info),
 	process_info(Info),
 	ask_for_additional(Info).
 
+/* Processes the symptoms initially provided */
 process_info(stop):- !.
 process_info(Info):-
 	atomic_list_concat(L,' ', Info), L = [Attribute,Waarde], !,
@@ -73,6 +81,7 @@ process_info(Info):-
 has_non_abstract(Symptom):-
    bagof(_, (fact(Symptom, W), \+is_abstract(Symptom, W)), _).
 
+/***** Backward chaining *****/
 is_true((X,Y), []):-
    fact(X,Y);
    fact_from_abstract(X,Y).
@@ -114,7 +123,7 @@ is_true( P1 and P2, OldCondition ):-
     is_true( P2, OldCondition ).
 
 
-/* --- A simple forward chaining rule interpreter --- */
+/* --- Forward chaining --- */
 
 forward:-
     new_derived_fact( P ),

@@ -59,11 +59,3 @@ fact_from_abstract(aanvallen, onregelmatig):-
 	fact(aanvallen, Waarde),
 	convert_to_value(Waarde, IntWaarde),
 	IntWaarde =< 0.
-
-% If koorts and malaria ask for 'aanvallen :regelmatig of onregelmatig)'
-% If regelmatig, ask for periods (i.e. every 2 or 3 days) and assert aanvallen(regelmatig, Period).
-% If onregelmatig, assert aanvallen(onregelmatig, -1). ?
-
-
-
-
