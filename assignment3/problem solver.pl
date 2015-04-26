@@ -10,9 +10,16 @@
 go:-
 	retractall(fact(_,_)),
 	write('Welkom bij het ziekte diagnose systeem\n'),
-	ask_for_additional_wrapper,
-	(is_true(ziekte(X)), write('U heeft '), write(X), !);
+	ask_for_additional_wrapper, !,
+	(is_true(ziekte(X), Rule), !, write('U heeft '), write(X),
+	 write('\n'), write(Rule));
 	(write('Geen ziekte gevonden.')).
+
+pretty_rule_print([]).
+
+pretty_rule_print(Rules|Tail):-
+	write(Rules),
+	pretty_rule_print(Tail).
 
 ask_for_additional_wrapper:- ask_for_additional(start).
 
@@ -45,14 +52,14 @@ process_info(Info):-
 has_non_abstract(Symptom):-
    bagof(_, (fact(Symptom, W), \+is_abstract(Symptom, W)), _).
 
-is_true((X,Y)):-
+is_true((X,Y), []):-
    fact(X,Y);
    fact_from_abstract(X,Y).
 
-is_true( P ):-
+is_true(P, []):-
     fact( P, true ).
 
-is_true(vraag(Symptom, Value)):-
+is_true(vraag(Symptom, Value), _):-
     is_abstract(Symptom, Value),
     (fact(Symptom, Value);
     fact_from_abstract(Symptom, Value));
@@ -64,7 +71,7 @@ is_true(vraag(Symptom, Value)):-
      (fact(Symptom, Value);
      fact_from_abstract(Symptom, Value))).
 
-is_true(vraag(Symptom, Value)):-
+is_true(vraag(Symptom, Value), _):-
     \+is_abstract(Symptom, Value),
     (fact(Symptom, Value);
     (\+has_non_abstract(Symptom),
@@ -73,16 +80,16 @@ is_true(vraag(Symptom, Value)):-
     assert(fact(Symptom, X)),
     fact(Symptom, Value))).
 
-is_true(vraag(Symptom)):-
-    is_true(vraag(Symptom, true)).
+is_true(vraag(Symptom), OldCondition):-
+    is_true(vraag(Symptom, true), OldCondition).
 
-is_true( P ):-
+is_true(P, [OldCondition, Condition then P]):-
     if Condition then P,
-    is_true( Condition ).
+    is_true(Condition, OldCondition).
 
-is_true( P1 and P2 ):-
-    is_true( P1 ),
-    is_true( P2 ).
+is_true( P1 and P2, OldCondition ):-
+    is_true( P1, OldCondition ),
+    is_true( P2, OldCondition ).
 
 
 /* --- A simple forward chaining rule interpreter --- */
