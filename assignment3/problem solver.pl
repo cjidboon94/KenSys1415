@@ -11,7 +11,8 @@ go:-
 	retractall(fact(_,_)),
 	write('Welkom bij het ziekte diagnose systeem\n'),
 	ask_for_additional_wrapper,
-	is_true(ziekte(X)), write(X).
+	(is_true(ziekte(X)), write('U heeft '), write(X), !);
+	(write('Geen ziekte gevonden.')).
 
 ask_for_additional_wrapper:- ask_for_additional(start).
 
@@ -32,12 +33,12 @@ ask_for_additional(_):-
 process_info(stop):- !.
 process_info(Info):-
 	atomic_list_concat(L,' ', Info), L = [Attribute,Waarde], !,
-
-	assert(fact(Attribute, Waarde)).
+        ((convert_to_value(Waarde, Intwaarde),
+	assert(fact(Attribute, Intwaarde)));
+	assert(fact(Attribute, Waarde))).
 
 process_info(Info):-
 	!,
-
 	assert(fact(Info, true)).
 
 
@@ -71,6 +72,9 @@ is_true(vraag(Symptom, Value)):-
     write('\n'), read(X),
     assert(fact(Symptom, X)),
     fact(Symptom, Value))).
+
+is_true(vraag(Symptom)):-
+    is_true(vraag(Symptom, true)).
 
 is_true( P ):-
     if Condition then P,
