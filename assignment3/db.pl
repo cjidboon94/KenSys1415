@@ -22,9 +22,9 @@ ziekteklasse(goedaardige_malaria).
 %%% Ziektes %%%
 %% Malaria
 if koorts then ziekteklasse(malaria).
-if ziekteklasse(malaria) and vraag(aanvallen, regelmatig) then ziekteklasse(goedaardige_malaria).
-if ziekteklasse(malaria) and vraag(aanvallen, onregelmatig) then ziekte(malaria_tropica).
-if ziekteklasse(goedaardige_malaria) and vraag(aanvallen, 2) then ziekte(malaria_tertiana).
+if ziekteklasse(malaria) and vraag(aanvallen, regelmatig, 'Heeft u aanvallen? (regelmatig/onregelmatig): ') then ziekteklasse(goedaardige_malaria).
+if ziekteklasse(malaria) and vraag(aanvallen, onregelmatig, 'Heeft u aanvallen? (regelmatig/onregelmatig): ') then ziekte(malaria_tropica).
+if ziekteklasse(goedaardige_malaria) and vraag(aanvallen, 2, 'Hoe vaak heeft u aanvallen?') then ziekte(malaria_tertiana).
 if ziekteklasse(goedaardige_malaria) and vraag(aanvallen, 3) then ziekte(malaria_quartana).
 
 %% Darminfectie
