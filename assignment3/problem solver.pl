@@ -19,14 +19,14 @@ go:-
 go1:-
 	write('Voer \'temperatuur 45\' in als symptoom, en vervolgens stop'), nl,
 	write('Als gevraagd wordt naar of u last heeft van aanvallen'), nl,
-	write('Voer dan 2 of 3 in'), nl, write('dan zal malaria_tertiana of malaria_quartana gediagnosticeerd worden'),
-	nl, go.
+	write('Voer dan 2 of 3 in'), nl, write('dan zal malaria_tertiana of malaria_quartana gediagnosticeerd worden.'),
+	nl, nl, go.
 
 go2:-
 	write('Voer diarree in als symptoom, en vervolgens stop'), nl,
 	write('Als gevraagd wordt naar of u last heeft van bloed of slijm'), nl,
-	write('Voer dan true'), nl, write('dan zal dysenterie gediagnosticeerd worden'),
-	nl, go.
+	write('Voer dan true'), nl, write('dan zal dysenterie gediagnosticeerd worden.'),
+	nl, nl, go.
 
 pretty_rules_print([], _).
 
