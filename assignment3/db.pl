@@ -25,10 +25,10 @@ ziekteklasse(goedaardige_malaria).
 %%% Ziektes %%%
 %% Malaria
 if koorts then ziekteklasse(malaria).
-if ziekteklasse(malaria) and aanvallen(onregelmatig, _) then ziekteklasse(goedaardige_malaria).
-if ziekteklasse(malaria) and aanvallen(regelmatig, _) then ziekte(malaria_tropica).
-if ziekteklasse(goedaardige_malaria) and aanvallen(regelmatig, 2) then ziekte(ziektemalaria_tertiana).
-if ziekteklasse(goedaardige_malaria) and aanvallen(regelmatig, 3) then ziekte(malaria_quartana).
+if ziekteklasse(malaria) and vraag(aanvallen, onregelmatig) then ziekteklasse(goedaardige_malaria).
+if ziekteklasse(malaria) and (aanvallen, regelmatig) then ziekte(malaria_tropica).
+if ziekteklasse(goedaardige_malaria) and (aanvallen, 2) then ziekte(ziektemalaria_tertiana).
+if ziekteklasse(goedaardige_malaria) and (aanvallen, 3) then ziekte(malaria_quartana).
 
 %% Darminfectie
 if diarree then ziekteklasse(darminfectie).
@@ -36,11 +36,15 @@ if darminfectie and ontlasting and slijm and bloed then dysenterie.
 if darminfectie and geling then geelzucht.
 if darminfectie and verlamming then polio.
 
-%%%% Symptoms %%%
-if temperature_hoog then koorts.
+%%%% Symptomen Abstractie %%%
+if (temperatuur, hoog) then koorts.
 
-fact(temperature_hoog):-
-    fact(temperature(Temperature)), Temperature >= 38.
+abstract(temperatuur, hoog):-
+    fact(temperatuur, Waarde), atom_number(Waarde, IntWaarde), IntWaarde >= 38.
+
+abstract(aanvalen, regelmatig):- fact(aanvallen, Waarde), atom_number(Waarde, IntWaarde), IntWaarde >= 0.
+
+abstract(aanvallen, onregelmatig):- fact(aanvallen, Waarde), atom_number(Waarde, IntWaarde), IntWaarde < 0.
 
 % If koorts and malaria ask for 'aanvallen :regelmatig of onregelmatig)'
 % If regelmatig, ask for periods (i.e. every 2 or 3 days) and assert aanvallen(regelmatig, Period).

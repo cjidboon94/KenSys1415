@@ -26,27 +26,29 @@ ask_for_additional(_):-
 
 process_info(stop):- !.
 process_info(Info):-
-	atomic_list_concat(L,' ', Info), L = [temperature,Waarde], !,
-	assert(fact(temperature(Waarde))).
+	atomic_list_concat(L,' ', Info), L = [Attribute,Waarde], !,
+	assert(fact(Attribute, Waarde)).
 
 process_info(Info):-
 	!,
 	assert(fact(Info, true)).
 
 
-fact(nothing).
+is_true((X,Y)):-
+   fact(X,Y);
+   abstract(X,Y).
 
 is_true( P ):-
-    \+fact( P, false),
     fact( P, true ).
 
-is_true(vraag(Symptom)):-
-    fact(Symptom);
-    (\+fact(Symptom),
+is_true(vraag(Symptom, Value)):-
+    fact(Symptom, Value);
+    abstract(Symptom, Value);
+    (\+fact(Symptom, _),
     write('heeft u ook last van: '), write(Symptom),
     write('\n'), read(X),
-    X = yes,
-    assert(fact(Symptom))).
+    assert(fact(Syptom, X)),
+    X = Value).
 
 is_true( P ):-
     if Condition then P,
@@ -74,7 +76,7 @@ new_derived_fact( Conclusion ):-
     composed_fact( Condition ).
 
 composed_fact( Condition ):-
-    fact( Condition ).
+    fact( Condition).
 
 composed_fact( Condition1 and Condition2 ):-
     composed_fact( Condition1 ),
