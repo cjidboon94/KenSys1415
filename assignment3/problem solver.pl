@@ -38,11 +38,13 @@ pretty_rules_print([Rule|Rules], X):-
 pretty_rule_print(Condition then P):-
 	print_part(Condition), write(' dan '), write(P).
 
-print_part(vraag(X,Y) and Z):- write((X,Y)), write(' en '), print_part(Z).
+print_part(vraag(X,Y,_) and Z):- write((X,Y)), write(' en '), print_part(Z).
+print_part(vraag(X,_) and Z):- write(X), write(' en '), print_part(Z).
 print_part(K and Z):- write(K), write(' en '), print_part(Z).
 print_part((X,Y) and Z):- write('('), write((X,Y)), write(') en '), print_part(Z).
 print_part((X,Y)):- write('('), write((X,Y)), write(')').
-print_part(vraag(X,Y)):- write('('), write((X,Y)), write(')').
+print_part(vraag(X,Y,_)):- write('('), write((X,Y)), write(')').
+print_part(vraag(X,_)):- write(X).
 print_part(X):- write(X).
 
 
@@ -78,23 +80,23 @@ is_true((X,Y), []):-
 is_true(P, []):-
     fact( P, true ).
 
-is_true(vraag(Symptom, Value), _):-
+is_true(vraag(Symptom, Value, Question), _):-
     is_abstract(Symptom, Value),
     (fact(Symptom, Value);
     fact_from_abstract(Symptom, Value));
     (\+fact_from_abstract(Symptom, _),
      \+fact(Symptom, _),
-     write('heeft u ook last van: '), write(Symptom),
+     write(Question),
      nl, read(X),
      assert(fact(Symptom, X)),
      (fact(Symptom, Value);
      fact_from_abstract(Symptom, Value))).
 
-is_true(vraag(Symptom, Value), _):-
+is_true(vraag(Symptom, Value, Question), _):-
     \+is_abstract(Symptom, Value),
     (fact(Symptom, Value);
     (\+has_non_abstract(Symptom),
-    write(Symptom), write(' (specifiek): '),
+    write(Question),
     nl, read(X),
     assert(fact(Symptom, X)),
     fact(Symptom, Value))).
@@ -117,19 +119,22 @@ is_true( P1 and P2, OldCondition ):-
 forward:-
     new_derived_fact( P ),
     !,
-    write( 'Derived:' ), write_ln( P ),
-    assert( fact( P )),
+    assert( fact( P, true )),
     forward
     ;
-    write_ln( 'No more facts' ).
+    !.
 
 new_derived_fact( Conclusion ):-
     if Condition then Conclusion,
-    not( fact( Conclusion ) ),
+    \+fact( Conclusion, _ ),
     composed_fact( Condition ).
 
 composed_fact( Condition ):-
-    fact( Condition).
+    fact( Condition, true).
+
+composed_fact((Condition,Value)):-
+    fact( Condition, Value);
+    fact_from_abstract( Condition, Value).
 
 composed_fact( Condition1 and Condition2 ):-
     composed_fact( Condition1 ),
