@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Koen van der Keijl - 10555900  %%%%
 %% Cornelis Boon - 10561145       %%%%
-%% Database voor opdracht 3       %%%%
+%% Problem Solver voor opdracht 3 %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- op(800, fx, if).
 :- op(700, xfx, then).
