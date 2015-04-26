@@ -16,7 +16,19 @@ go:-
 	 pretty_rules_print(Rules, 1), !);
 	 write('Geen ziekte gevonden.')).
 
-pretty_rules_print([], _).
+go1:-
+	write('Voer koorts in als symptoom, en vervolgens stop'), nl,
+	write('Als gevraagd wordt naar of u last heeft van aanvallen'), nl,
+	write('Voer dan 2 of 3 in'), nl, write('dan zal malaria_tertiana of malaria_quartana gediagnosticeerd worden'),
+	nl, go.
+
+go2:-
+	write('Voer diarree in als symptoom, en vervolgens stop'), nl,
+	write('Als gevraagd wordt naar of u last heeft van bloed of slijm'), nl,
+	write('Voer dan true'), nl, write('dan zal dysenterie gediagnosticeerd worden'),
+	nl, go.
+
+pretty_rules_print([], _)
 
 pretty_rules_print([Rule|Rules], X):-
 	write('Regel '), write(X), write(': '), pretty_rule_print(Rule), nl,
@@ -26,7 +38,7 @@ pretty_rules_print([Rule|Rules], X):-
 pretty_rule_print(Condition then P):-
 	print_part(Condition), write(' dan '), write(P).
 
-print_part(vraag(X,Y) and Z):- write(' '), write((X,Y)), write('en '), print_part(Z).
+print_part(vraag(X,Y) and Z):- write((X,Y)), write(' en '), print_part(Z).
 print_part(K and Z):- write(K), write(' en '), print_part(Z).
 print_part((X,Y) and Z):- write('('), write((X,Y)), write(') en '), print_part(Z).
 print_part((X,Y)):- write('('), write((X,Y)), write(')').
@@ -37,12 +49,6 @@ print_part(X):- write(X).
 ask_for_additional_wrapper:- ask_for_additional(start).
 
 ask_for_additional(stop):- !.
-
-ask_for_additional(start):-
-	!,
-	write('Voer symptoom in, of type stop: '), read(Info),
-	process_info(Info),
-	ask_for_additional(Info).
 
 ask_for_additional(_):-
 	!,
@@ -128,5 +134,3 @@ composed_fact( Condition ):-
 composed_fact( Condition1 and Condition2 ):-
     composed_fact( Condition1 ),
     composed_fact( Condition2 ).
-
-
